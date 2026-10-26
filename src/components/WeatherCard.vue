@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { WEATHER_LOCATION } from '../config/location'
+import { WEATHER_LOCATION, WEATHER_LOCATION_ERROR } from '../config/location'
 import { describeWeather, fetchWeather, type WeatherData } from '../services/weather'
 
 const weather = ref<WeatherData | null>(null)
@@ -15,6 +15,12 @@ const hourLabel = (time: string) => {
 }
 async function load() {
   controller?.abort()
+  if (WEATHER_LOCATION_ERROR) {
+    weather.value = null
+    loading.value = false
+    error.value = WEATHER_LOCATION_ERROR
+    return
+  }
   controller = new AbortController()
   loading.value = true
   error.value = ''
